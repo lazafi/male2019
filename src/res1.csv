@@ -1,4 +1,4 @@
-ID,"class"
+ID,class
 368,democrat
 15,republican
 94,democrat
@@ -44,7 +44,7 @@ ID,"class"
 312,democrat
 254,republican
 124,republican
-177,democrat
+177,republican
 409,democrat
 96,democrat
 176,democrat
@@ -94,7 +94,7 @@ ID,"class"
 31,republican
 326,democrat
 136,republican
-327,democrat
+327,republican
 295,democrat
 58,republican
 261,democrat
@@ -145,7 +145,7 @@ ID,"class"
 331,republican
 127,republican
 365,democrat
-373,republican
+373,democrat
 305,republican
 413,republican
 434,republican
@@ -209,8 +209,8 @@ ID,"class"
 225,republican
 236,republican
 325,republican
-141,democrat
-356,democrat
+141,republican
+356,republican
 408,republican
 187,democrat
 377,democrat

@@ -3,7 +3,7 @@ library(tidyverse)
 # col_types = cols(ID = col_skip())
 url <- "../data/CongressionalVoting/CongressionalVotingID.shuf.train.csv"
 
-data <- read_csv(url, col_types = cols(
+votedata <- read_csv(url, col_types = cols(
   ID = col_skip(),
   class = col_factor(NULL),
   `handicapped-infants` = col_factor(c("y","n","unknown")),
@@ -23,51 +23,121 @@ data <- read_csv(url, col_types = cols(
   `duty-free-exports` = col_factor(c("y","n","unknown")),
   `export-administration-act-south-africa` = col_factor(c("y","n","unknown"))
 ))
-str(data)
+
+# replace unconvinient columnname characters
+names(votedata) <- gsub("-", "_", names(votedata))
+
+str(votedata)
 
 par(mfrow = c(2,3))
-for (col in colnames(data)[2:7]) {
+for (col in colnames(votedata)[2:7]) {
   print(col)
-  hit <- table(data$class, data[[col]])
+  hit <- table(votedata$class, votedata[[col]])
   mosaicplot(hit, col=c(3,2,1), main=col)
 }
-for (col in colnames(data)[8:13]) {
+for (col in colnames(votedata)[8:13]) {
   print(col)
-  hit <- table(data$class, data[[col]])
+  hit <- table(votedata$class, votedata[[col]])
   mosaicplot(hit, col=c(3,2,1), main=col)
 }
-for (col in colnames(data)[14:17]) {
+for (col in colnames(votedata)[14:17]) {
   print(col)
-  hit <- table(data$class, data[[col]])
+  hit <- table(votedata$class, votedata[[col]])
   mosaicplot(hit, col=c(3,2,1), main=col)
 }
 
-set.seed(100)
-randsample <- sample(nrow(data), 0.7*nrow(data), replace = FALSE)
-train <- data[randsample,]
-valid <- data[-randsample,]
-summary(train)
-summary(valid)
+
 
 # random forests
 #install.packages("randomForest")
 library(randomForest)
 
-#names(data)[names(data) == "handicapped-infants"] <- "handicappedinfants"
-names(train) <- gsub("-", "_", names(train))
-train
 
-model1 <- randomForest(class ~ ., data = train, importance = TRUE)
-model1
 
-pred <- predict(model1, train, type = "class")
-table(pred, train$class)
+# split validataion
 
-names(valid) <- gsub("-", "_", names(valid))
-pred <- predict(model1, valid, type = "class")
+set.seed(123)
+randsample <- sample(nrow(votedata), 0.6*nrow(votedata), replace = FALSE)
+train <- votedata[randsample,]
+valid <- votedata[-randsample,]
+
+# baseline random classifier 
+baseline <- sample(c("democrat", "republican"), nrow(valid), replace = TRUE)
+#baseline always democrat
+baseline <- rep("democrat", nrow(valid))
+confusionMatrix(as.factor(baseline), valid$class)
+
+# random Forest
+model_rf_1 <- randomForest(class ~ ., data = train, importance = TRUE)
+
+pred <- predict(model_rf_1, valid, type = "class")
 table(pred, valid$class)
+confusionMatrix(pred, valid$class)
+
+model_rf_2 <- randomForest(class ~ ., data = train, ntree = 500)
+pred <- predict(model_rf_1, valid, type = "class")
+confusionMatrix(pred, valid$class)
+
+library(MASS)
+step.model <- stepAIC(model_rf_2, direction = "both", trace = FALSE)
+
+# cross validation
+#library(cvTools)
+
+#rawdata <- read_csv(url) 
+## replace unconvinient columnname characters
+#names(rawdata) <- gsub("-", "_", names(rawdata))
+#str(rawdata)
+#model2 <- randomForest(class ~ ., data = votedata)
+#m2_cv <- cvFit(model2, data = votedata, y = class)
 
 
+#library(caret)
+#train_control <- trainControl(method="cv", number=10)
+#grid <- expand.grid(mtry=c(2,5,10))
+#grid
+#model3 <- train(class~., data=votedata, trControl=train_control, method="rf", tuneGrid=grid)
+#model3
+
+# split naive bayes
+model4 <- naiveBayes(class ~., data=train)
+model4
+
+pred4 <- predict(model4, valid, type = "class")
+table(pred4, valid$class)
+confusionMatrix(pred, valid$class)
+#library(MASS)
+#step.model <- stepAIC(model4, direction = "both", trace = FALSE)
+#library(klaR)
+#stepclass(class~., data=train, method="naiveBayes", grouping=c("democrat", "republican")) 
+
+# cv naive bayes
+train_control <- trainControl(method="cv", number=10)
+grid <- expand.grid(fL=c(0), usekernel=c(FALSE), adjust=c(TRUE))
+grid
+model5 <- train(class~.-ID, data=rawdata, trControl=train_control, method="nb", tuneGrid=grid)
+model5
+
+# split knn
+
+#convert to numeric
+train_numeric <- train
+train_numeric[,2:17] <- lapply(train[,2:17], function(x) as.numeric(x) );
+valid_numeric <- valid
+valid_numeric[,2:17] <- lapply(valid[,2:17], function(x) as.numeric(x) );
+
+library(class)
+
+accs <- list()
+for (k in 2:40) {
+  pred_knn <- knn(train_numeric[,2:17], valid_numeric[,2:17], train_numeric$class,k=k)
+  cm <- confusionMatrix(pred_knn, valid_numeric$class)
+  k
+  accs <- c(accs, cm$overall[1])
+}
+par(mfrow = c(1,1))
+accs
+plot(2:40, accs)
 # predict kaggle test set
 testurl <- "../data/CongressionalVoting/CongressionalVotingID.shuf.test.csv"
 test <- read_csv(testurl, col_types = cols( 
