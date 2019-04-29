@@ -48,16 +48,18 @@ for (col in colnames(votedata)[14:17]) {
 
 
 
-# random forests
-#install.packages("randomForest")
+# use random forests to calculate importance
 library(randomForest)
-
-
+model_rf <- randomForest(class ~ ., data = votedata, importance = TRUE)
+ginis <- model_rf$importance[,4]
+op <- par(mar=c(13,4,4,2)) 
+barplot(ginis[order(ginis)], horiz = TRUE, las=1, main= "Importance", xlab = "Gini",cex.axis=0.8, cex.names=0.8)
+rm(op)
 
 # split validataion
 
 set.seed(123)
-randsample <- sample(nrow(votedata), 0.6*nrow(votedata), replace = FALSE)
+randsample <- sample(nrow(votedata), 0.8*nrow(votedata), replace = FALSE)
 train <- votedata[randsample,]
 valid <- votedata[-randsample,]
 
@@ -67,16 +69,31 @@ baseline <- sample(c("democrat", "republican"), nrow(valid), replace = TRUE)
 baseline <- rep("democrat", nrow(valid))
 confusionMatrix(as.factor(baseline), valid$class)
 
-# random Forest
+# random forests
+#install.packages("randomForest")
+library(randomForest)
 model_rf_1 <- randomForest(class ~ ., data = train, importance = TRUE)
 
 pred <- predict(model_rf_1, valid, type = "class")
 table(pred, valid$class)
 confusionMatrix(pred, valid$class)
 
-model_rf_2 <- randomForest(class ~ ., data = train, ntree = 500)
-pred <- predict(model_rf_1, valid, type = "class")
+model_rf_2 <- randomForest(class ~ ., data = train, ntree = 100)
+pred <- predict(model_rf_2, valid, type = "class")
 confusionMatrix(pred, valid$class)
+
+
+# try more parameters
+
+accs <- list()
+
+for (k in seq(2, 16)) {
+  model <- randomForest(class ~ ., data = train, mtry = k)
+  pred <- predict(model, valid, type = "class")
+  cm <- confusionMatrix(pred, valid$class)
+  accs <- c(accs, cm$overall[1])
+}
+plot(2:16, accs)
 
 library(MASS)
 step.model <- stepAIC(model_rf_2, direction = "both", trace = FALSE)
@@ -105,7 +122,7 @@ model4
 
 pred4 <- predict(model4, valid, type = "class")
 table(pred4, valid$class)
-confusionMatrix(pred, valid$class)
+confusionMatrix(pred4, valid$class)
 #library(MASS)
 #step.model <- stepAIC(model4, direction = "both", trace = FALSE)
 #library(klaR)
@@ -132,7 +149,6 @@ accs <- list()
 for (k in 2:40) {
   pred_knn <- knn(train_numeric[,2:17], valid_numeric[,2:17], train_numeric$class,k=k)
   cm <- confusionMatrix(pred_knn, valid_numeric$class)
-  k
   accs <- c(accs, cm$overall[1])
 }
 par(mfrow = c(1,1))
@@ -161,7 +177,9 @@ test <- read_csv(testurl, col_types = cols(
 
 #test <- read_csv(testurl)
 names(test) <- gsub("-", "_", names(test))
-pred3 <- predict(model1, test, type = "class")
+model12 <- randomForest(class ~ ., data = train, mtry = 12)
+#pred3 <- predict(model5, test, type = "class")
+pred3 <- predict(model5, test, type = "raw")
 
 result <- cbind(test$ID, as.character(pred3))
 colnames(result) <- c("ID", "class")
