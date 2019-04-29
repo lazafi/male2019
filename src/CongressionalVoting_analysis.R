@@ -24,8 +24,30 @@ votedata <- read_csv(url, col_types = cols(
   `export-administration-act-south-africa` = col_factor(c("y","n","unknown"))
 ))
 
+votedata_na <- read_csv(url, col_types = cols(
+  ID = col_skip(),
+  class = col_factor(NULL),
+  `handicapped-infants` = col_factor(c("y","n")),
+  `water-project-cost-sharing` = col_factor(c("y","n")),
+  `adoption-of-the-budget-resolution` =col_factor(c("y","n")),
+  `physician-fee-freeze` = col_factor(c("y","n")),
+  `el-salvador-aid` = col_factor(c("y","n")),
+  `religious-groups-in-schools` = col_factor(c("y","n")),
+  `anti-satellite-test-ban` = col_factor(c("y","n")),
+  `aid-to-nicaraguan-contras` = col_factor(c("y","n")),
+  `mx-missile` = col_factor(c("y","n")),
+  immigration = col_factor(c("y","n")),
+  `synfuels-crporation-cutback` = col_factor(c("y","n")),
+  `education-spending` = col_factor(c("y","n")),
+  `superfund-right-to-sue` = col_factor(c("y","n")),
+  crime = col_factor(c("y","n")),
+  `duty-free-exports` = col_factor(c("y","n")),
+  `export-administration-act-south-africa` = col_factor(c("y","n"))
+),  na = "unknown")
+
 # replace unconvinient columnname characters
 names(votedata) <- gsub("-", "_", names(votedata))
+names(votedata_na) <- gsub("-", "_", names(votedata_na))
 
 str(votedata)
 
@@ -59,7 +81,7 @@ rm(op)
 # split validataion
 
 set.seed(123)
-randsample <- sample(nrow(votedata), 0.8*nrow(votedata), replace = FALSE)
+randsample <- sample(nrow(votedata), 0.6*nrow(votedata), replace = FALSE)
 train <- votedata[randsample,]
 valid <- votedata[-randsample,]
 
@@ -82,6 +104,18 @@ model_rf_2 <- randomForest(class ~ ., data = train, ntree = 100)
 pred <- predict(model_rf_2, valid, type = "class")
 confusionMatrix(pred, valid$class)
 
+#ommit physician-fee-freese
+
+model_rf_3 <- randomForest(class ~ . - physician_fee_freeze, data = train)
+confusionMatrix(predict(model_rf_3, valid, type = "class"), valid$class)
+
+# try with na
+train_na <- votedata_na[randsample,]
+valid_na <- votedata_na[-randsample,]
+
+model_rf_na_1 <- randomForest(class ~ ., data = train_na[,2:18] , na.action=na.omit)
+confusionMatrix(predict(model_rf_na_1, valid_na, type = "class"), valid_na$class)
+
 
 # try more parameters
 
@@ -95,8 +129,10 @@ for (k in seq(2, 16)) {
 }
 plot(2:16, accs)
 
-library(MASS)
-step.model <- stepAIC(model_rf_2, direction = "both", trace = FALSE)
+getTree(model_rf_1, labelVar = TRUE)
+
+#library(MASS)
+#step.model <- stepAIC(model_rf_2, direction = "both", trace = FALSE)
 
 # cross validation
 #library(cvTools)
@@ -125,8 +161,29 @@ table(pred4, valid$class)
 confusionMatrix(pred4, valid$class)
 #library(MASS)
 #step.model <- stepAIC(model4, direction = "both", trace = FALSE)
-#library(klaR)
-#stepclass(class~., data=train, method="naiveBayes", grouping=c("democrat", "republican")) 
+library(klaR)
+stepclass(train[,2:17], t(train[,1]), "naiveBayes", start.vars = "physician_fee_freeze") 
+#stepclass(formula=class~., data=train, method="naiveBayes") 
+
+stepclass(train[,2:17], t(train[,1]), "naiveBayes", direction = "backward") 
+stepAIC(model4, class~.)
+
+
+#use only a subset
+
+accs <- list()
+for (i in 2:16) {
+  print(formula)
+  formula <- paste("class ~", paste(names(ginis[order(-ginis)][2:i]), collapse = '+'))
+  model_nb_2 <- naiveBayes(as.formula(formula), data=train)
+  cm <- confusionMatrix(predict(model_nb_2, valid, type = "class"), valid$class)
+  print(cm$overall[1])
+  accs = c(accs, cm$overall[1])
+}
+plot(2:16, accs)
+
+# model for kaggle
+model_nb_3 <- naiveBayes(class ~ adoption_of_the_budget_resolution+education_spending+el_salvador_aid+aid_to_nicaraguan_contras+mx_missile+synfuels_crporation_cutback, data=train)
 
 # cv naive bayes
 train_control <- trainControl(method="cv", number=10)
@@ -146,14 +203,14 @@ valid_numeric[,2:17] <- lapply(valid[,2:17], function(x) as.numeric(x) );
 library(class)
 
 accs <- list()
-for (k in 2:40) {
+for (k in 2:16) {
   pred_knn <- knn(train_numeric[,2:17], valid_numeric[,2:17], train_numeric$class,k=k)
   cm <- confusionMatrix(pred_knn, valid_numeric$class)
   accs <- c(accs, cm$overall[1])
 }
 par(mfrow = c(1,1))
 accs
-plot(2:40, accs)
+plot(2:10, accs)
 # predict kaggle test set
 testurl <- "../data/CongressionalVoting/CongressionalVotingID.shuf.test.csv"
 test <- read_csv(testurl, col_types = cols( 
@@ -179,7 +236,7 @@ test <- read_csv(testurl, col_types = cols(
 names(test) <- gsub("-", "_", names(test))
 model12 <- randomForest(class ~ ., data = train, mtry = 12)
 #pred3 <- predict(model5, test, type = "class")
-pred3 <- predict(model5, test, type = "raw")
+pred3 <- predict(model_nb_3, test, type = "class")
 
 result <- cbind(test$ID, as.character(pred3))
 colnames(result) <- c("ID", "class")
