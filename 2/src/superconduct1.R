@@ -159,3 +159,26 @@ xgb_base <- train(
   verbose = TRUE,
   na.action=na.omit
 )
+
+#knn
+
+#getModelInfo("knn")$knn$parameters
+#parameter   class      label
+#1         k numeric #Neighbors
+
+grid_knn <- expand.grid(
+  k = 2:100
+)
+
+model_knn <- train(
+  formula,
+  data=data,
+  trControl = train_control,
+  tuneGrid = grid_knn,
+  method="knn"
+)
+
+model_knn$results
+plot(model_knn$results$k, model_knn$results$Rsquared, xlab="k", ylab="r²", type = "l")
+
+

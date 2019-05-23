@@ -103,7 +103,8 @@ model_rf <- train(
   data=data,
   trControl = train_control,
   tuneGrid = grid_rf,
-  verbose = TRUE
+  verbose = TRUE,
+  method="rf"
 )
 
 plot(model_rf$results$mtry, model_rf$results$Rsquared, xlab="mtry", ylab="r²", log = "x", type = "b")
@@ -112,3 +113,46 @@ plot(data$Gross, predict(model_rf$finalModel), xlab="y", ylab="y-hat")
 abline(c(0,1), col="red")
 
 #######
+
+#getModelInfo("glmnet")$glmnet$parameters
+#parameter   class                    label
+#1     alpha numeric        Mixing Percentage
+#2    lambda numeric Regularization Parameter
+
+grid_lasso <- expand.grid(
+  alpha = c(0, 0.25, 0.5, 0.75, 1),
+  lambda = c(0, 0.25, 0.5, 0.75, 1)
+)
+
+model_lasso <- train(
+  formula,
+  data=data,
+  trControl = train_control,
+  tuneGrid = grid_lasso,
+  method="glmnet"
+)
+
+model_lasso$results
+
+#######
+#knn
+
+#getModelInfo("knn")$knn$parameters
+#parameter   class      label
+#1         k numeric #Neighbors
+
+grid_knn <- expand.grid(
+  k = 2:100
+)
+
+model_knn <- train(
+  formula,
+  data=data,
+  trControl = train_control,
+  tuneGrid = grid_knn,
+  method="knn"
+)
+
+model_knn$results
+plot(model_knn$results$k, model_knn$results$Rsquared, xlab="k", ylab="r²", type = "l")
+
