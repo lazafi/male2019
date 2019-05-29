@@ -1,13 +1,22 @@
 library(readr)
 url <- "2/data/superconduct/train.csv"
-url2 <- "2/data/superconduct/unique_m.csv"
 
-data <- read_csv(url)
-str(data)
-summary(data)
+data1 <- read_csv(url)
+str(data1)
+summary(data1)
+
+url2 <- "2/data/superconduct/unique_m.csv"
+data2 <- read_csv(url2)
+
+# replace all na-s with 0
+data2[is.na(data2)] <- 0
 
 # show missing data
-data[!complete.cases(data),]
+data1[!complete.cases(data1),]
+
+# combine data
+#data <- cbind(data1, data2[,1:86])
+data <- data1
 
 #add info from chemical formula
 #formula_data <- read_csv(url2)
@@ -15,16 +24,18 @@ data[!complete.cases(data),]
 
 # data analysis
 
-hist(data$critical_temp)
-plot(density(data$critical_temp))
+ggplot(data, aes(x=critical_temp)) + 
+  geom_histogram(aes(y=..density..), colour="black", bins = 14, fill="white")+
+  geom_density(alpha=.2, fill="#FF6666")
+
 
 ##stepwise feature selection
 ## linear regression with all variables
 #
-#m1 <- lm(critical_temp~.,data=data)
-#summary(m1)
-#plot(m1)
-
+m1 <- lm(critical_temp~.,data=data)
+summary(m1)
+plot(m1)
+print(m1)
 #plot(data$critical_temp, predict(m1), xlab="y", ylab="y-hat")
 #abline(c(0,1), col="red")
 
@@ -61,8 +72,12 @@ set.seed(123)
 #omp_set_num_threads(4) # caret parallel processing threads
 
 # use cv to train models
-train_control <- trainControl(method="cv", number=10)
-
+train_control <- trainControl(
+  method = "cv",
+  number = 2,
+  verboseIter = TRUE, 
+  allowParallel = TRUE # FALSE for reproducible results 
+)
 
 # train lm model, use it as baseline
 model <- train(critical_temp~., data=data, trControl=train_control, method = 'lm')
@@ -83,6 +98,9 @@ print(model_rlm)
 plot(data$critical_temp, predict(model_rlm$finalModel), xlab="y", ylab="y-hat", pch = model_rlm$finalModel$weights)
 abline(c(0,1), col="red")
 
+# residual plot
+plot(predict(model_rlm$finalModel), model_rlm$finalModel$residuals, xlab="predicted Gross", ylab="residual")
+
 
 # random forrest
 #$rfRules$parameters
@@ -91,20 +109,13 @@ abline(c(0,1), col="red")
 #2  maxdepth numeric            Maximum Rule Depth
 
 grid_rf <- expand.grid(
-  mtry = c(1, 10, 20, 50, 100)
-)
-
-train_rf <- trainControl(
-  method = "cv",
-  number = 2,
-  verboseIter = TRUE, 
-  allowParallel = FALSE # FALSE for reproducible results 
+  mtry = c(1, 10, 20)
 )
 
 model_rf <- train(
   critical_temp~.,
   data=data,
-  trControl = train_rf,
+  trControl = train_control,
   tuneGrid = grid_rf,
   verbose = TRUE,
   na.action=na.omit
@@ -116,9 +127,10 @@ plot(data$critical_temp, predict(model_rf$finalModel), xlab="y", ylab="y-hat")
 abline(c(0,1), col="red")
 
 
-# xgboost
-#https://www.kaggle.com/pelkoja/visual-xgboost-tuning-with-caret
 
+# xgboost
+# xgboost is used in the paper atached to the original data
+#https://www.kaggle.com/pelkoja/visual-xgboost-tuning-with-caret
 
 
 #$xgbTree$parameters
@@ -143,12 +155,6 @@ grid_default <- expand.grid(
   subsample = 0.5
 )
 
-train_control <- trainControl(
-  method = "cv",
-  number = 2,
-  verboseIter = TRUE, 
-  allowParallel = FALSE # FALSE for reproducible results 
-)
 
 xgb_base <- train(
   critical_temp~.,
@@ -159,6 +165,29 @@ xgb_base <- train(
   verbose = TRUE,
   na.action=na.omit
 )
+###ridge
+
+grid_ridge <- expand.grid(
+  alpha = 1,
+  lambda = 10^seq(-3, 5, length.out = 100)
+)
+
+model_ridge <- train(
+  critical_temp~.,
+  data=data,
+  trControl = train_control,
+  tuneGrid = grid_ridge,
+  method="glmnet"
+)
+
+model_ridge$results
+x<-model_ridge$results$lambda
+y <- model_ridge$results$RMSE
+plot(x, y, xlab="lamdba", ylab="r²", type = "p")
+
+plot(model_ridge$results$lambda, model_ridge$results$RMSE, xlab="lamdba", ylab="r²", type = "p")
+abline(v=model_ridge$finalModel$lambdaOpt, col="red")
+##
 
 #knn
 
@@ -167,11 +196,11 @@ xgb_base <- train(
 #1         k numeric #Neighbors
 
 grid_knn <- expand.grid(
-  k = 2:100
+  k = seq(2, 102, by=10)
 )
 
 model_knn <- train(
-  formula,
+  critical_temp~.,
   data=data,
   trControl = train_control,
   tuneGrid = grid_knn,
@@ -181,4 +210,16 @@ model_knn <- train(
 model_knn$results
 plot(model_knn$results$k, model_knn$results$Rsquared, xlab="k", ylab="r²", type = "l")
 
+plot(model_knn$results$k, model_knn$results$RMSE, xlab="k", ylab="RSME", type = "b", main="kNN Parameter Tuning")
+
+model_knn2 <- train(
+  critical_temp~.,
+  data=data,
+  trControl = train_control,
+  tuneGrid = grid_knn,
+  method="knn",
+  preProcess = c("center", "scale")
+)
+
+plot(model_knn2$results$k, model_knn2$results$RMSE, xlab="k", ylab="RSME", type = "b", main="kNN Parameter Tuning")
 
