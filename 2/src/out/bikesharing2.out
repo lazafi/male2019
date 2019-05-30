@@ -1,0 +1,63 @@
+[(0.560000, SimpleRegressionPipeline({'regressor:xgradient_boosting:scale_pos_weight': 1, 'regressor:xgradient_boosting:n_estimators': 512, 'preprocessor:feature_agglomeration:linkage': 'complete', 'regressor:__choice__': 'xgradient_boosting', 'regressor:xgradient_boosting:subsample': 0.45835496008309484, 'regressor:xgradient_boosting:max_delta_step': 0, 'preprocessor:feature_agglomeration:affinity': 'manhattan', 'imputation:strategy': 'mean', 'regressor:xgradient_boosting:gamma': 0, 'categorical_encoding:__choice__': 'no_encoding', 'preprocessor:feature_agglomeration:n_clusters': 72, 'regressor:xgradient_boosting:learning_rate': 0.0961273376978726, 'preprocessor:__choice__': 'feature_agglomeration', 'regressor:xgradient_boosting:colsample_bytree': 0.6457497680874725, 'regressor:xgradient_boosting:base_score': 0.5, 'regressor:xgradient_boosting:colsample_bylevel': 0.733296788387398, 'regressor:xgradient_boosting:booster': 'gbtree', 'regressor:xgradient_boosting:reg_alpha': 8.112533723481788e-06, 'preprocessor:feature_agglomeration:pooling_func': 'median', 'regressor:xgradient_boosting:min_child_weight': 13, 'regressor:xgradient_boosting:max_depth': 6, 'rescaling:__choice__': 'standardize', 'regressor:xgradient_boosting:reg_lambda': 3.98203137564711e-09},
+dataset_properties={
+  'target_type': 'regression',
+  'multiclass': False,
+  'task': 4,
+  'multilabel': False,
+  'signed': False,
+  'sparse': False})),
+(0.220000, SimpleRegressionPipeline({'regressor:extra_trees:min_impurity_decrease': 0.0, 'regressor:extra_trees:max_depth': 'None', 'preprocessor:feature_agglomeration:n_clusters': 332, 'regressor:extra_trees:criterion': 'mse', 'preprocessor:__choice__': 'feature_agglomeration', 'categorical_encoding:one_hot_encoding:minimum_fraction': 0.0015850683030723275, 'categorical_encoding:__choice__': 'one_hot_encoding', 'preprocessor:feature_agglomeration:linkage': 'average', 'regressor:extra_trees:max_leaf_nodes': 'None', 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'True', 'regressor:__choice__': 'extra_trees', 'regressor:extra_trees:max_features': 1.0, 'preprocessor:feature_agglomeration:affinity': 'cosine', 'imputation:strategy': 'most_frequent', 'regressor:extra_trees:n_estimators': 100, 'regressor:extra_trees:min_samples_split': 2, 'preprocessor:feature_agglomeration:pooling_func': 'median', 'regressor:extra_trees:bootstrap': 'False', 'rescaling:__choice__': 'standardize', 'regressor:extra_trees:min_samples_leaf': 1},
+dataset_properties={
+  'target_type': 'regression',
+  'multiclass': False,
+  'task': 4,
+  'multilabel': False,
+  'signed': False,
+  'sparse': False})),
+(0.120000, SimpleRegressionPipeline({'regressor:gradient_boosting:max_features': 0.40008047628284227, 'regressor:gradient_boosting:max_leaf_nodes': 'None', 'regressor:gradient_boosting:min_samples_split': 3, 'regressor:gradient_boosting:min_weight_fraction_leaf': 0.0, 'preprocessor:__choice__': 'no_preprocessing', 'regressor:gradient_boosting:min_impurity_decrease': 0.0, 'regressor:gradient_boosting:n_estimators': 432, 'imputation:strategy': 'mean', 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'False', 'regressor:__choice__': 'gradient_boosting', 'regressor:gradient_boosting:subsample': 0.8750302800744085, 'regressor:gradient_boosting:loss': 'huber', 'regressor:gradient_boosting:max_depth': 4, 'regressor:gradient_boosting:alpha': 0.9284677696192374, 'regressor:gradient_boosting:learning_rate': 0.15467176656823273, 'categorical_encoding:__choice__': 'one_hot_encoding', 'rescaling:__choice__': 'standardize', 'regressor:gradient_boosting:min_samples_leaf': 8},
+dataset_properties={
+  'target_type': 'regression',
+  'multiclass': False,
+  'task': 4,
+  'multilabel': False,
+  'signed': False,
+  'sparse': False})),
+(0.040000, SimpleRegressionPipeline({'preprocessor:random_trees_embedding:bootstrap': 'True', 'preprocessor:__choice__': 'random_trees_embedding', 'regressor:__choice__': 'ridge_regression', 'regressor:ridge_regression:alpha': 0.001618653284191377, 'regressor:ridge_regression:fit_intercept': 'True', 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'False', 'preprocessor:random_trees_embedding:min_samples_leaf': 11, 'preprocessor:random_trees_embedding:max_leaf_nodes': 'None', 'preprocessor:random_trees_embedding:n_estimators': 83, 'imputation:strategy': 'most_frequent', 'regressor:ridge_regression:tol': 0.021388196523302844, 'preprocessor:random_trees_embedding:min_samples_split': 9, 'preprocessor:random_trees_embedding:min_weight_fraction_leaf': 1.0, 'categorical_encoding:__choice__': 'one_hot_encoding', 'rescaling:__choice__': 'none', 'preprocessor:random_trees_embedding:max_depth': 6},
+dataset_properties={
+  'target_type': 'regression',
+  'multiclass': False,
+  'task': 4,
+  'multilabel': False,
+  'signed': False,
+  'sparse': False})),
+(0.040000, SimpleRegressionPipeline({'preprocessor:nystroem_sampler:kernel': 'sigmoid', 'preprocessor:nystroem_sampler:n_components': 5818, 'preprocessor:__choice__': 'nystroem_sampler', 'regressor:ridge_regression:alpha': 0.0014391414053139071, 'regressor:ridge_regression:fit_intercept': 'True', 'preprocessor:nystroem_sampler:coef0': 0.421637083874129, 'preprocessor:nystroem_sampler:gamma': 0.030785156852761446, 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'True', 'regressor:__choice__': 'ridge_regression', 'categorical_encoding:one_hot_encoding:minimum_fraction': 0.004461923602535857, 'imputation:strategy': 'most_frequent', 'regressor:ridge_regression:tol': 2.53950656812892e-05, 'categorical_encoding:__choice__': 'one_hot_encoding', 'rescaling:__choice__': 'standardize'},
+dataset_properties={
+  'target_type': 'regression',
+  'multiclass': False,
+  'task': 4,
+  'multilabel': False,
+  'signed': False,
+  'sparse': False})),
+(0.020000, SimpleRegressionPipeline({'preprocessor:random_trees_embedding:bootstrap': 'False', 'preprocessor:__choice__': 'random_trees_embedding', 'regressor:__choice__': 'ridge_regression', 'regressor:ridge_regression:alpha': 0.8512041656018082, 'regressor:ridge_regression:fit_intercept': 'True', 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'True', 'preprocessor:random_trees_embedding:min_samples_leaf': 15, 'preprocessor:random_trees_embedding:max_leaf_nodes': 'None', 'categorical_encoding:one_hot_encoding:minimum_fraction': 0.00183168455734341, 'preprocessor:random_trees_embedding:n_estimators': 89, 'imputation:strategy': 'most_frequent', 'regressor:ridge_regression:tol': 0.00010796163281125668, 'preprocessor:random_trees_embedding:min_samples_split': 9, 'preprocessor:random_trees_embedding:min_weight_fraction_leaf': 1.0, 'categorical_encoding:__choice__': 'one_hot_encoding', 'rescaling:__choice__': 'minmax', 'preprocessor:random_trees_embedding:max_depth': 6},
+dataset_properties={
+  'target_type': 'regression',
+  'multiclass': False,
+  'task': 4,
+  'multilabel': False,
+  'signed': False,
+  'sparse': False})),
+]
+===
+R2 score: 0.9359707814137064
+MSE score: 1993.7627532876145
+RMSE score: 44.651570557905515
+###
+auto-sklearn results:
+  Dataset name: bikesharing
+  Metric: rmse
+  Best validation score: 44.920112
+  Number of target algorithm runs: 204
+  Number of successful target algorithm runs: 162
+  Number of crashed target algorithm runs: 0
+  Number of target algorithms that exceeded the time limit: 28
+  Number of target algorithms that exceeded the memory limit: 14

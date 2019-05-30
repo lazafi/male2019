@@ -1,0 +1,63 @@
+[(0.420000, SimpleRegressionPipeline({'regressor:gradient_boosting:min_samples_leaf': 8, 'rescaling:__choice__': 'standardize', 'categorical_encoding:__choice__': 'one_hot_encoding', 'regressor:gradient_boosting:learning_rate': 0.15467176656823273, 'regressor:gradient_boosting:loss': 'huber', 'regressor:gradient_boosting:n_estimators': 432, 'regressor:gradient_boosting:max_leaf_nodes': 'None', 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'False', 'regressor:gradient_boosting:max_features': 0.40008047628284227, 'regressor:gradient_boosting:min_impurity_decrease': 0.0, 'regressor:gradient_boosting:min_samples_split': 3, 'regressor:gradient_boosting:alpha': 0.9284677696192374, 'preprocessor:__choice__': 'no_preprocessing', 'regressor:gradient_boosting:max_depth': 4, 'imputation:strategy': 'mean', 'regressor:gradient_boosting:min_weight_fraction_leaf': 0.0, 'regressor:__choice__': 'gradient_boosting', 'regressor:gradient_boosting:subsample': 0.8750302800744085},
+dataset_properties={
+  'sparse': False,
+  'target_type': 'regression',
+  'task': 4,
+  'multiclass': False,
+  'signed': False,
+  'multilabel': False})),
+(0.160000, SimpleRegressionPipeline({'regressor:gradient_boosting:min_samples_leaf': 3, 'regressor:gradient_boosting:max_leaf_nodes': 'None', 'preprocessor:fast_ica:n_components': 1981, 'rescaling:__choice__': 'minmax', 'categorical_encoding:__choice__': 'no_encoding', 'regressor:gradient_boosting:learning_rate': 0.6025973822782666, 'regressor:gradient_boosting:loss': 'lad', 'regressor:gradient_boosting:n_estimators': 262, 'preprocessor:fast_ica:algorithm': 'parallel', 'preprocessor:fast_ica:whiten': 'True', 'regressor:gradient_boosting:max_features': 0.29666983460304525, 'regressor:gradient_boosting:min_impurity_decrease': 0.0, 'regressor:gradient_boosting:min_samples_split': 14, 'preprocessor:__choice__': 'fast_ica', 'regressor:gradient_boosting:max_depth': 9, 'imputation:strategy': 'most_frequent', 'regressor:gradient_boosting:min_weight_fraction_leaf': 0.0, 'regressor:__choice__': 'gradient_boosting', 'preprocessor:fast_ica:fun': 'logcosh', 'regressor:gradient_boosting:subsample': 0.9368401843453338},
+dataset_properties={
+  'sparse': False,
+  'target_type': 'regression',
+  'task': 4,
+  'multiclass': False,
+  'signed': False,
+  'multilabel': False})),
+(0.140000, SimpleRegressionPipeline({'regressor:random_forest:n_estimators': 100, 'categorical_encoding:one_hot_encoding:minimum_fraction': 0.01, 'rescaling:__choice__': 'standardize', 'categorical_encoding:__choice__': 'one_hot_encoding', 'regressor:random_forest:max_depth': 'None', 'regressor:__choice__': 'random_forest', 'regressor:random_forest:max_features': 1.0, 'regressor:random_forest:min_weight_fraction_leaf': 0.0, 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'True', 'regressor:random_forest:min_impurity_decrease': 0.0, 'regressor:random_forest:max_leaf_nodes': 'None', 'regressor:random_forest:bootstrap': 'True', 'regressor:random_forest:min_samples_leaf': 1, 'preprocessor:__choice__': 'no_preprocessing', 'imputation:strategy': 'mean', 'regressor:random_forest:criterion': 'mse', 'regressor:random_forest:min_samples_split': 2},
+dataset_properties={
+  'sparse': False,
+  'target_type': 'regression',
+  'task': 4,
+  'multiclass': False,
+  'signed': False,
+  'multilabel': False})),
+(0.120000, SimpleRegressionPipeline({'regressor:ridge_regression:tol': 0.021388196523302844, 'preprocessor:random_trees_embedding:bootstrap': 'True', 'rescaling:__choice__': 'none', 'preprocessor:random_trees_embedding:max_depth': 6, 'categorical_encoding:__choice__': 'one_hot_encoding', 'preprocessor:random_trees_embedding:min_weight_fraction_leaf': 1.0, 'regressor:ridge_regression:alpha': 0.001618653284191377, 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'False', 'preprocessor:random_trees_embedding:min_samples_split': 9, 'preprocessor:random_trees_embedding:max_leaf_nodes': 'None', 'preprocessor:random_trees_embedding:min_samples_leaf': 11, 'preprocessor:__choice__': 'random_trees_embedding', 'imputation:strategy': 'most_frequent', 'regressor:ridge_regression:fit_intercept': 'True', 'regressor:__choice__': 'ridge_regression', 'preprocessor:random_trees_embedding:n_estimators': 83},
+dataset_properties={
+  'sparse': False,
+  'target_type': 'regression',
+  'task': 4,
+  'multiclass': False,
+  'signed': False,
+  'multilabel': False})),
+(0.100000, SimpleRegressionPipeline({'preprocessor:polynomial:degree': 3, 'regressor:ridge_regression:tol': 0.06028099535711932, 'rescaling:robust_scaler:q_min': 0.2621908091751185, 'categorical_encoding:one_hot_encoding:minimum_fraction': 0.04087038431077562, 'rescaling:__choice__': 'robust_scaler', 'categorical_encoding:__choice__': 'one_hot_encoding', 'regressor:ridge_regression:alpha': 0.05898248784281652, 'preprocessor:polynomial:include_bias': 'False', 'preprocessor:polynomial:interaction_only': 'False', 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'True', 'rescaling:robust_scaler:q_max': 0.8957614034200889, 'preprocessor:__choice__': 'polynomial', 'imputation:strategy': 'most_frequent', 'regressor:ridge_regression:fit_intercept': 'True', 'regressor:__choice__': 'ridge_regression'},
+dataset_properties={
+  'sparse': False,
+  'target_type': 'regression',
+  'task': 4,
+  'multiclass': False,
+  'signed': False,
+  'multilabel': False})),
+(0.060000, SimpleRegressionPipeline({'regressor:random_forest:n_estimators': 100, 'rescaling:__choice__': 'none', 'categorical_encoding:__choice__': 'no_encoding', 'regressor:random_forest:max_depth': 'None', 'regressor:__choice__': 'random_forest', 'regressor:random_forest:max_features': 0.6217453890276725, 'preprocessor:fast_ica:algorithm': 'parallel', 'regressor:random_forest:min_weight_fraction_leaf': 0.0, 'preprocessor:fast_ica:whiten': 'True', 'regressor:random_forest:min_impurity_decrease': 0.0, 'regressor:random_forest:max_leaf_nodes': 'None', 'regressor:random_forest:bootstrap': 'True', 'regressor:random_forest:min_samples_leaf': 18, 'preprocessor:__choice__': 'fast_ica', 'imputation:strategy': 'median', 'preprocessor:fast_ica:n_components': 305, 'regressor:random_forest:criterion': 'mse', 'preprocessor:fast_ica:fun': 'exp', 'regressor:random_forest:min_samples_split': 15},
+dataset_properties={
+  'sparse': False,
+  'target_type': 'regression',
+  'task': 4,
+  'multiclass': False,
+  'signed': False,
+  'multilabel': False})),
+]
+===
+R2 score: 0.40822168294508254
+MSE score: 39.56497031232418
+RMSE score: 6.290069181839272
+###
+auto-sklearn results:
+  Dataset name: bikesharing
+  Metric: rmse
+  Best validation score: 6.033453
+  Number of target algorithm runs: 91
+  Number of successful target algorithm runs: 57
+  Number of crashed target algorithm runs: 1
+  Number of target algorithms that exceeded the time limit: 33
+  Number of target algorithms that exceeded the memory limit: 0

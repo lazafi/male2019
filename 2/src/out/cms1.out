@@ -1,0 +1,80 @@
+[(0.380000, SimpleRegressionPipeline({'regressor:adaboost:n_estimators': 446, 'regressor:adaboost:max_depth': 6, 'regressor:adaboost:learning_rate': 0.19416430434915044, 'preprocessor:feature_agglomeration:linkage': 'average', 'preprocessor:feature_agglomeration:pooling_func': 'mean', 'categorical_encoding:__choice__': 'no_encoding', 'regressor:__choice__': 'adaboost', 'rescaling:quantile_transformer:output_distribution': 'uniform', 'preprocessor:__choice__': 'feature_agglomeration', 'rescaling:__choice__': 'quantile_transformer', 'imputation:strategy': 'mean', 'preprocessor:feature_agglomeration:affinity': 'euclidean', 'preprocessor:feature_agglomeration:n_clusters': 313, 'regressor:adaboost:loss': 'linear', 'rescaling:quantile_transformer:n_quantiles': 1478},
+dataset_properties={
+  'signed': False,
+  'multilabel': False,
+  'target_type': 'regression',
+  'sparse': False,
+  'task': 4,
+  'multiclass': False})),
+(0.220000, SimpleRegressionPipeline({'preprocessor:polynomial:interaction_only': 'False', 'categorical_encoding:__choice__': 'one_hot_encoding', 'regressor:random_forest:max_features': 0.7701968723227626, 'regressor:random_forest:min_weight_fraction_leaf': 0.0, 'preprocessor:polynomial:degree': 2, 'regressor:random_forest:min_samples_split': 20, 'regressor:__choice__': 'random_forest', 'regressor:random_forest:min_samples_leaf': 18, 'preprocessor:__choice__': 'polynomial', 'regressor:random_forest:min_impurity_decrease': 0.0, 'regressor:random_forest:criterion': 'friedman_mse', 'imputation:strategy': 'mean', 'preprocessor:polynomial:include_bias': 'False', 'categorical_encoding:one_hot_encoding:minimum_fraction': 0.006847298186896977, 'regressor:random_forest:n_estimators': 100, 'regressor:random_forest:max_leaf_nodes': 'None', 'rescaling:__choice__': 'none', 'regressor:random_forest:max_depth': 'None', 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'True', 'regressor:random_forest:bootstrap': 'True'},
+dataset_properties={
+  'signed': False,
+  'multilabel': False,
+  'target_type': 'regression',
+  'sparse': False,
+  'task': 4,
+  'multiclass': False})),
+(0.160000, SimpleRegressionPipeline({'preprocessor:polynomial:interaction_only': 'False', 'categorical_encoding:__choice__': 'no_encoding', 'regressor:random_forest:max_features': 0.7109304821084321, 'regressor:random_forest:min_weight_fraction_leaf': 0.0, 'preprocessor:polynomial:degree': 3, 'regressor:__choice__': 'random_forest', 'regressor:random_forest:min_samples_leaf': 19, 'preprocessor:__choice__': 'polynomial', 'regressor:random_forest:min_samples_split': 10, 'regressor:random_forest:criterion': 'mse', 'imputation:strategy': 'median', 'preprocessor:polynomial:include_bias': 'False', 'regressor:random_forest:n_estimators': 100, 'regressor:random_forest:max_leaf_nodes': 'None', 'rescaling:__choice__': 'none', 'regressor:random_forest:max_depth': 'None', 'regressor:random_forest:min_impurity_decrease': 0.0, 'regressor:random_forest:bootstrap': 'False'},
+dataset_properties={
+  'signed': False,
+  'multilabel': False,
+  'target_type': 'regression',
+  'sparse': False,
+  'task': 4,
+  'multiclass': False})),
+(0.100000, SimpleRegressionPipeline({'preprocessor:random_trees_embedding:bootstrap': 'False', 'regressor:random_forest:min_impurity_decrease': 0.0, 'preprocessor:random_trees_embedding:max_depth': 10, 'preprocessor:random_trees_embedding:min_samples_leaf': 11, 'regressor:random_forest:max_features': 0.8648779381788387, 'rescaling:__choice__': 'none', 'imputation:strategy': 'median', 'preprocessor:random_trees_embedding:n_estimators': 28, 'categorical_encoding:one_hot_encoding:minimum_fraction': 0.0012669731594437887, 'preprocessor:random_trees_embedding:max_leaf_nodes': 'None', 'regressor:random_forest:n_estimators': 100, 'regressor:random_forest:max_depth': 'None', 'preprocessor:random_trees_embedding:min_weight_fraction_leaf': 1.0, 'regressor:random_forest:bootstrap': 'False', 'preprocessor:__choice__': 'random_trees_embedding', 'preprocessor:random_trees_embedding:min_samples_split': 14, 'categorical_encoding:__choice__': 'one_hot_encoding', 'regressor:__choice__': 'random_forest', 'regressor:random_forest:min_samples_leaf': 10, 'regressor:random_forest:min_samples_split': 9, 'regressor:random_forest:criterion': 'mae', 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'True', 'regressor:random_forest:min_weight_fraction_leaf': 0.0, 'regressor:random_forest:max_leaf_nodes': 'None'},
+dataset_properties={
+  'signed': False,
+  'multilabel': False,
+  'target_type': 'regression',
+  'sparse': False,
+  'task': 4,
+  'multiclass': False})),
+(0.080000, SimpleRegressionPipeline({'preprocessor:random_trees_embedding:bootstrap': 'True', 'regressor:random_forest:min_impurity_decrease': 0.0, 'preprocessor:random_trees_embedding:max_depth': 9, 'preprocessor:random_trees_embedding:min_samples_leaf': 16, 'regressor:random_forest:max_features': 0.8418156622702728, 'rescaling:__choice__': 'none', 'imputation:strategy': 'median', 'preprocessor:random_trees_embedding:n_estimators': 75, 'preprocessor:random_trees_embedding:max_leaf_nodes': 'None', 'regressor:random_forest:n_estimators': 100, 'regressor:random_forest:max_depth': 'None', 'preprocessor:random_trees_embedding:min_weight_fraction_leaf': 1.0, 'regressor:random_forest:min_weight_fraction_leaf': 0.0, 'preprocessor:__choice__': 'random_trees_embedding', 'preprocessor:random_trees_embedding:min_samples_split': 9, 'categorical_encoding:__choice__': 'no_encoding', 'regressor:__choice__': 'random_forest', 'regressor:random_forest:min_samples_leaf': 1, 'regressor:random_forest:min_samples_split': 17, 'regressor:random_forest:criterion': 'mse', 'regressor:random_forest:bootstrap': 'True', 'regressor:random_forest:max_leaf_nodes': 'None'},
+dataset_properties={
+  'signed': False,
+  'multilabel': False,
+  'target_type': 'regression',
+  'sparse': False,
+  'task': 4,
+  'multiclass': False})),
+(0.020000, SimpleRegressionPipeline({'regressor:adaboost:n_estimators': 84, 'regressor:adaboost:max_depth': 9, 'regressor:adaboost:learning_rate': 0.6446088083486005, 'preprocessor:feature_agglomeration:linkage': 'complete', 'preprocessor:feature_agglomeration:pooling_func': 'max', 'categorical_encoding:__choice__': 'no_encoding', 'regressor:__choice__': 'adaboost', 'preprocessor:__choice__': 'feature_agglomeration', 'rescaling:__choice__': 'standardize', 'imputation:strategy': 'mean', 'preprocessor:feature_agglomeration:affinity': 'euclidean', 'preprocessor:feature_agglomeration:n_clusters': 93, 'regressor:adaboost:loss': 'linear'},
+dataset_properties={
+  'signed': False,
+  'multilabel': False,
+  'target_type': 'regression',
+  'sparse': False,
+  'task': 4,
+  'multiclass': False})),
+(0.020000, SimpleRegressionPipeline({'regressor:adaboost:n_estimators': 267, 'preprocessor:__choice__': 'no_preprocessing', 'rescaling:__choice__': 'standardize', 'imputation:strategy': 'mean', 'regressor:adaboost:learning_rate': 1.958148024150017, 'categorical_encoding:__choice__': 'no_encoding', 'regressor:adaboost:loss': 'exponential', 'regressor:__choice__': 'adaboost', 'regressor:adaboost:max_depth': 4},
+dataset_properties={
+  'signed': False,
+  'multilabel': False,
+  'target_type': 'regression',
+  'sparse': False,
+  'task': 4,
+  'multiclass': False})),
+(0.020000, SimpleRegressionPipeline({'preprocessor:random_trees_embedding:bootstrap': 'False', 'regressor:extra_trees:bootstrap': 'True', 'regressor:extra_trees:min_samples_split': 12, 'preprocessor:random_trees_embedding:max_depth': 6, 'regressor:extra_trees:max_depth': 'None', 'preprocessor:random_trees_embedding:min_samples_leaf': 18, 'preprocessor:__choice__': 'random_trees_embedding', 'rescaling:__choice__': 'none', 'imputation:strategy': 'mean', 'preprocessor:random_trees_embedding:n_estimators': 65, 'preprocessor:random_trees_embedding:max_leaf_nodes': 'None', 'regressor:extra_trees:max_features': 0.7183811004779217, 'regressor:extra_trees:max_leaf_nodes': 'None', 'preprocessor:random_trees_embedding:min_weight_fraction_leaf': 1.0, 'regressor:extra_trees:criterion': 'friedman_mse', 'preprocessor:random_trees_embedding:min_samples_split': 9, 'categorical_encoding:__choice__': 'one_hot_encoding', 'regressor:__choice__': 'extra_trees', 'categorical_encoding:one_hot_encoding:use_minimum_fraction': 'False', 'regressor:extra_trees:min_impurity_decrease': 0.0, 'regressor:extra_trees:n_estimators': 100, 'regressor:extra_trees:min_samples_leaf': 2},
+dataset_properties={
+  'signed': False,
+  'multilabel': False,
+  'target_type': 'regression',
+  'sparse': False,
+  'task': 4,
+  'multiclass': False})),
+]
+===
+R2 score: 0.7091320800543865
+MSE score: 1858745593528643.0
+RMSE score: 43113171.92609056
+###
+auto-sklearn results:
+  Dataset name: cms
+  Metric: rmse
+  Best validation score: 47205417.989038
+  Number of target algorithm runs: 3109
+  Number of successful target algorithm runs: 2832
+  Number of crashed target algorithm runs: 244
+  Number of target algorithms that exceeded the time limit: 33
+  Number of target algorithms that exceeded the memory limit: 0
+
