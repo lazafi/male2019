@@ -1,20 +1,20 @@
-#Machine Learning Excercise 3
+# Machine Learning Excercise 3
 
-##Usage
+## Usage
 
 ### command line options
 
 
-##Topic 3.8: Deep Learning
+## Topic 3.8: Deep Learning
 
-###Data
+### Data
 
-###Extracting Metadata From Images
+### Extracting Metadata From Images
 
-####Histogram
+#### Histogram
 
-####Visual Bag Of Words
+#### Visual Bag Of Words
 
-###Deep Convolutional Neural Network 
+### Deep Convolutional Neural Network 
 
-###Conclusions
+### Conclusions
