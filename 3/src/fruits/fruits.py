@@ -16,8 +16,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 
-import progressbar
-
 from helper import *
 from bov.Bag import BOV
 
@@ -29,7 +27,12 @@ car_data.loadImages("/home/lazafi/labor/ml-2019/male2019/3/data/CarData/TrainIma
 car_data.loadImages("/home/lazafi/labor/ml-2019/male2019/3/data/CarData/TestImages", "neg")
 print(car_data.count)
 
-car_data.addFeatures(Histogram(50))
+##
+#car_data.addFeatures(Pixel)
+
+
+
+car_data.addFeatures(Histogram(10))
 
 # knn
 exp1 = Experiment(car_data, KNeighborsClassifier(n_neighbors=3, weights = 'distance'),  "Histogram with Knn k=3")
@@ -37,12 +40,14 @@ exp1.train()
 exp1.evaluate()
 
 # BOV
-
-car_data.addFeatures(BOV(50, debug=False))
-# svc
-exp1 = Experiment(car_data,  svm.SVC())
-exp1.train()
-exp1.evaluate()
+# TODO: BOV does not work well with cardata (bug) becouse it cannot create features for small resolution images. 
+# the trainset images are 40x100 pixels
+# maybe we leave this experiment out
+#car_data.addFeatures(BOV(50, debug=False))
+## svc
+#exp1 = Experiment(car_data,  svm.SVC())
+#exp1.train()
+#exp1.evaluate()
 
 
         

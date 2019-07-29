@@ -16,11 +16,14 @@ import pandas as pd
 import numpy as np
 
 
-
+# class representing experiments.
 class Experiment:
-        def __init__(self, data, classifier, label=None):
+        def __init__(self, data, classifier=None, label=None):
             #self.featuresExtractor = featuresExtr
-            self.classifier = classifier
+            if classifier == None:
+                self.classifier = None
+            else:
+                self.classifier = classifier
             self.dataset = data
             if label == None:
                 self.label = "%s %s" % (type(self.dataset).__name__, type(self.classifier).__name__)
@@ -28,12 +31,24 @@ class Experiment:
                 self.label = label
             pass
 
-        #TODO: specify classifier here
-        def train(self):
+        def train(self, classifier=None):
             #if features == None:
             #    x_data, y_data = self.featuresExtractor.features(self.dataset.images)
             #else
             self.x_train, self.x_test, self.y_train, self.y_test =  train_test_split(self.dataset.x_data, self.dataset.y_data, test_size=0.33, random_state=123)
+            if classifier == None:
+                if self.classifier == None:
+                    raise Exception("no classifier specified")
+            else:
+                self.classifier = classifier
+            
+            for t in self.x_train:
+                for v in t:
+                    if isinstance(v, str):
+                        print('x is a str!')
+            
+            np.savetxt('test_exp2.out', self.x_train, delimiter=',')
+            
             self.classifier.fit(self.x_train, self.y_train)
 
         def evaluate(self):
@@ -114,18 +129,42 @@ class ImageDataSet:
             pass
         
         def addFeatures(self, featureExtractor):
+            """
+            use the featureExtractor to add features from image data
+            overwrites old features
+            """
             self.x_data, self.y_data = featureExtractor.features(self.images)
 
         def resetFeatures(self):
+            """
+            reset feature vector
+            """
             self.x_data = []
             self.y_data = []
 
 class FIDS30DataSet(ImageDataSet):
-        def __init__(self, path, limit=None):
+        def __init__(self, path=None, limit=None):
             super(FIDS30DataSet, self).__init__()
-            self.images, self.labels, self.count = File().getFiles_FIDS30(path, limit)
+            if path != None:
+                self.images, self.labels, self.count = File().getFiles_FIDS30(path, limit)
             #self.labels
             pass
+
+        def loadImages(self, path, clazz=None, limit=None):
+            """
+            load images from directory
+            all images in clazz if specified
+            if no clazz, the image class is guessed from name (neg* or pos*)
+            """
+            images, labels, count = File().getFiles_FIDS30(path, limit)
+            # merge read images with existing ones
+            self.images = {**self.images, **images}
+            #self.labels = self.labels.union(labels)
+            labelslist = list(self.labels)
+            labelslist.extend(x for x in labels if x not in labelslist)
+            self.labels = labelslist
+            #self.labels = set(self.labels)
+            self.count += count
 
 class CarDataSet(ImageDataSet):
         def __init__(self, path=None, limit=None):
@@ -136,6 +175,11 @@ class CarDataSet(ImageDataSet):
             pass
 
         def loadImages(self, path, clazz=None, limit=None):
+            """
+            load images from directory
+            all images in clazz if specified
+            if no clazz, the image class is guessed from name (neg* or pos*)
+            """
             images, labels, count = File().getFiles_CarData(path, clazz, limit)
             # merge read images with existing ones
             self.images = {**self.images, **images}
@@ -146,8 +190,12 @@ class CarDataSet(ImageDataSet):
             #self.labels = set(self.labels)
             self.count += count
 
+# classes for extracting features from image datasets
 
 class Histogram:
+        """
+        extracts Histogram data from images
+        """
         def __init__(self, bins, debug = False):
             self.images = []
             self.bins = bins
@@ -203,3 +251,28 @@ class Histogram:
                     print("saved: " + word+ ".histograms.png")
 
             return (x_data, y_data)
+
+class Pixel:
+        """
+        extract pixel data
+        """
+        def __init__(self, standartize = True, debug = False):
+            self.debug = debug
+            self.standartize = standartize
+            pass
+
+        def features(self, images):
+            x_data = []
+            y_data = []
+            labels = []
+            for word, imlist in images.items():
+                labels.append(word)
+                for i, img in enumerate(imlist):
+                    pixels = img.flatten()
+                    #standartize
+                    if self.standartize:
+                        pixels = [(x - min(pixels)) / (max(pixels) - min(pixels)) for x in pixels]
+                    x_data.append(pixels)
+                    y_data.append(labels.index(word))
+            return (x_data, y_data)
+            
