@@ -64,7 +64,7 @@ for f in args.features:
         p = 50
         extractor = BOV(p)
     if f == "pixel":
-        extractor = Pixel
+        extractor = Pixel()
     dataset.addFeatures(extractor)
 
 ## train dataset

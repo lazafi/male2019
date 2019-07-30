@@ -42,31 +42,36 @@ class Experiment:
             else:
                 self.classifier = classifier
             
-            for t in self.x_train:
-                for v in t:
-                    if isinstance(v, str):
-                        print('x is a str!')
+
+
+            #for t in self.x_train:
+            #    for v in t:
+            #        if isinstance(v, str):
+            #            print('x is a str!')
             
-            np.savetxt('test_exp2.out', self.x_train, delimiter=',')
+            #np.savetxt('test_exp2.out', self.x_train, delimiter=',')
             
             self.classifier.fit(self.x_train, self.y_train)
 
-        def evaluate(self):
+        def evaluate(self, text=False, figure=False, debug=False):
             predicted = self.classifier.predict(self.x_test)
-
-            for i, x in enumerate(self.x_test):
-                print("%d %d %d %s %s" % (i, self.y_test[i], predicted[i], self.dataset.labels[int(self.y_test[i])], self.dataset.labels[int(predicted[i])]) )
             confusion = confusion_matrix(self.y_test, predicted)
 
-            df_cm = pd.DataFrame(confusion, index = [i for i in self.dataset.labels],
-                            columns = [i for i in self.dataset.labels])
-            ax = plt.axes()
-            cm = sn.heatmap(df_cm, annot=True, ax=ax) 
-            ax.set_title("ConfusionMatrix %s" % self.label)
-            plt.show()
-            report = classification_report(self.y_test, predicted)
-            print("classifier %s:\n%s\n" % (self.classifier, report))
-            print("Confusion matrix:\n%s" % confusion)
+            if debug:
+                for i, x in enumerate(self.x_test):
+                    print("%d %d %d %s %s" % (i, self.y_test[i], predicted[i], self.dataset.labels[int(self.y_test[i])], self.dataset.labels[int(predicted[i])]) )
+            if figure:
+                df_cm = pd.DataFrame(confusion, index = [i for i in self.dataset.labels], columns = [i for i in self.dataset.labels])
+                plt.figure(figsize=(10,10))
+                ax = plt.axes()
+                cm = sn.heatmap(df_cm, annot=True, ax=ax) 
+                ax.set_title("ConfusionMatrix %s" % self.label)
+
+                plt.show()
+            if text:
+                report = classification_report(self.y_test, predicted)
+                print("classifier %s:\n%s\n" % (self.classifier, report))
+                #print("Confusion matrix:\n%s" % confusion)    
 
 class File:
     
@@ -86,15 +91,21 @@ class File:
         labels = []
         for each in glob(path + "/*")[:limit]:
             if isdir(each):
+                dcount = 0
                 word = each.split("/")[-1]
-                print (" #### Reading image category " + word + " ##### ")
+                #print (" #### Reading image category " + word + " ##### ")
                 labels.append(word)
                 imlist[word] = []
                 for imagefile in glob(path + "/" + word+"/*")[:limit]:
-                    print ("Reading file " + imagefile)
-                    im = cv2.imread(imagefile, 0)
-                    imlist[word].append(im)
-                    count +=1 
+                    #print ("Reading file " + imagefile)
+                    im = cv2.imread(imagefile, cv2.COLOR_BGR2RGB)
+                    rgb = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+                    imlist[word].append(rgb)
+                    #plt.imshow(rgb)
+                    #plt.show()
+                    count += 1
+                    dcount += 1 
+                print (" category %s %d" % (word, dcount) )
 
         return [imlist, labels, count]
 
@@ -126,6 +137,7 @@ class ImageDataSet:
             self.x_data = []
             self.y_data = []
             self.count = 0
+            self.name_dict = {}
             pass
         
         def addFeatures(self, featureExtractor):
@@ -227,18 +239,22 @@ class Histogram:
             x_data = []
             y_data = []
             labels = []
+            label_count = 0
+            name_dict = {}
             for word, imlist in images.items():
                 labels.append(word)
+                name_dict[str(label_count)] = word
                 for i, img in enumerate(imlist):
                     hist = self.getHistogramData(img, self.bins)
                     #standartize
                     hist = [(x - min(hist)) / (max(hist) - min(hist)) for x in hist]
                     x_data.append(hist)
                     y_data.append(labels.index(word))
+                label_count += 1
                 if self.debug:
-                    f, axarr = plt.subplots(20,2,figsize = (10,7))
+                    f, axarr = plt.subplots(len(imlist),2,figsize = (10,7))
                     f.canvas.set_window_title(word)
-                    for i, img in enumerate(imlist[:20]):
+                    for i, img in enumerate(imlist):
                         fig = axarr[i,0].imshow(img)   
                         fig.axes.get_xaxis().set_visible(False)
                         fig.axes.get_yaxis().set_visible(False)
@@ -246,10 +262,10 @@ class Histogram:
                         axarr[i,1].xaxis.set_visible(False)
                         axarr[i,1].yaxis.set_visible(False)
 
-                    plt.savefig(word+ ".histograms.png")
-                    plt.close(f)
-                    print("saved: " + word+ ".histograms.png")
-
+                    #plt.savefig(word+ ".histograms.png")
+                    #plt.close(f)
+                    #print("saved: " + word+ ".histograms.png")
+                    plt.show()
             return (x_data, y_data)
 
 class Pixel:
@@ -274,5 +290,8 @@ class Pixel:
                         pixels = [(x - min(pixels)) / (max(pixels) - min(pixels)) for x in pixels]
                     x_data.append(pixels)
                     y_data.append(labels.index(word))
+                    if self.debug:
+                        print(word)
+                        print(pixels)
             return (x_data, y_data)
             

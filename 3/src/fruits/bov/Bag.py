@@ -65,8 +65,9 @@ class BOV:
 
         self.bov_helper.standardize()
         if self.debug:
+            print(self.bov_helper.mega_histogram)
             plt.figure(figsize = (10,7))
-            plt.bar(self.bov_helper.mega_histogram)
+            plt.bar(self.bov_helper.mega_histogram, height=10)
             plt.show()
 
         return (self.bov_helper.mega_histogram, self.train_labels)
@@ -92,10 +93,11 @@ class BOV:
             self.name_dict[str(label_count)] = word
             print ("Computing Features for " + word)
             for im in imlist:
-                # cv2.imshow("im", im)
-                # cv2.waitKey()
+                cv2.imshow("im", im)
+                cv2.waitKey()
                 self.train_labels = np.append(self.train_labels, label_count)
                 kp, des = self.im_helper.features(im)
+                print(des)
                 self.descriptor_list.append(des)
                 self.trainImageCount += 1
 
