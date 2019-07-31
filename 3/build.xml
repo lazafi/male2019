@@ -1,0 +1,20 @@
+<project name="fruits" default="install">
+        <target name="env" >
+                <exec command="python3 -m pip install --user --upgrade pip" failifexecutionfails="true" failonerror="true"/>
+                <exec command="python3 -m pip install --user virtualenv" failifexecutionfails="true" failonerror="true"/>
+                <exec command="python3 -m venv env" failifexecutionfails="true" failonerror="true"/>
+               <!-- > <exec executable="source">
+                        <arg value="env/bin/activate"/>
+                </exec> -->
+        </target>
+        <target name="install" depends="env" >
+                <exec command="env/bin/pip install -r requirements.txt"/>
+        </target>
+        <target name="cli" depends="install" >
+                <exec executable="env/bin/python">
+                        <arg file="src/fruits/experiment.py"/>
+                        <arg line="--dataset=FIDS30 --dir=/home/lazafi/labor/ml-2019/male2019/3/data/FIDS30 --classifier=knn --classifier-par=3 --features=histogram --histogram-bins=10"/>
+                </exec>
+        </target>
+
+</project>
