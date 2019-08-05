@@ -1,6 +1,13 @@
 # Installation and Running instructions
 
-## setting up vscode with Python
+## ant install script
+```
+ant install
+```
+
+## Manual install
+
+### setting up vscode with Python
 
 
 ```
@@ -16,7 +23,7 @@ ctr+shf+p -> select Pythone Intepreter -> venv
 ctr+shf+p -> create new Integrated terminal
 
 
-## install dependencies
+### install dependencies
 
 ```
 pip install --upgrade pip
@@ -30,9 +37,8 @@ pip install opencv-contrib-python
 python3 src/fruits/fruits.py
 ```
 
-## jupyter notebook
+### jupyter notebook
 ```
 pip install jupyter
 ```
 
-TODO: install script
