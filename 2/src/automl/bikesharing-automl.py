@@ -20,6 +20,7 @@ def main():
     y = data[:, 12] 
     print(y)
     feature_types =  (['categorical'] * 7) + (['numerical'] * 4)
+    #default test split 25%
     X_train, X_test, y_train, y_test = \
         sklearn.model_selection.train_test_split(X, y, random_state=1)
 
