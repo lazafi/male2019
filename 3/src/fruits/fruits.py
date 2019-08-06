@@ -17,7 +17,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 
 from helper import *
-from bov.Bag import BOV
 
 
 # prepare the car dataset with histogram features
@@ -27,17 +26,35 @@ car_data.loadImages("/home/lazafi/labor/ml-2019/male2019/3/data/CarData/TrainIma
 car_data.loadImages("/home/lazafi/labor/ml-2019/male2019/3/data/CarData/TestImages", "neg")
 print(car_data.count)
 
+# TODO: standartize=True is very slow!
+car_data.addFeatures(Pixel(standartize = False, debug=True))
+
+(x_train, x_test, y_train, y_test) = car_data.getData(ratio=0.3)
+
+#datagen = ImageDataGenerator(
+#    featurewise_center=True,
+#    featurewise_std_normalization=True,
+#    rotation_range=20,
+#    width_shift_range=0.2,
+#    height_shift_range=0.2,
+#    horizontal_flip=True)
+
+# fits the model on batches with real-time data augmentation:
+#model.fit_generator(datagen.flow(x_train, y_train, batch_size=32),steps_per_epoch=len(x_train) / 32, epochs=epochs)
+
+
 ##
 #car_data.addFeatures(Pixel)
 
 
 
-car_data.addFeatures(Histogram(10))
+car_data.addFeatures(BOV(20))
+
 
 # knn
-exp1 = Experiment(car_data, KNeighborsClassifier(n_neighbors=3, weights = 'distance'),  "Histogram with Knn k=3")
+exp1 = Experiment(car_data, KNeighborsClassifier(n_neighbors=3, weights = 'distance'),  "BOV with Knn k=3")
 exp1.train()
-exp1.evaluate()
+exp1.evaluate(figure=True, text=True)
 
 # BOV
 # TODO: BOV does not work well with cardata (bug) becouse it cannot create features for small resolution images. 
@@ -54,19 +71,19 @@ exp1.evaluate()
 # prepare the fids30 dataset with histogram features
 datapath = "/home/lazafi/labor/ml-2019/male2019/3/data/FIDS30"
 fids30_data = FIDS30DataSet("/home/lazafi/labor/ml-2019/male2019/3/data/FIDS30", 10)
-fids30_data.addFeatures(Histogram(50))
+fids30_data.addFeatures(BOV(50))
 print(fids30_data.count)
 
 # svc
 
 exp1 = Experiment(fids30_data, svm.SVC(), "Histogram with SVC")
 exp1.train()
-exp1.evaluate()
+exp1.evaluate(figure=True, text=True)
 
 # knn
 exp1 = Experiment(fids30_data, KNeighborsClassifier(n_neighbors=3, weights = 'distance'),  "Histogram with Knn k=3")
 exp1.train()
-exp1.evaluate()
+exp1.evaluate(figure=True, text=True)
 
 score = []
 for k in range(1, 10):
@@ -83,7 +100,7 @@ plt.show()
 # mlp
 exp1 = Experiment(fids30_data,  MLPClassifier())
 exp1.train()
-exp1.evaluate()
+exp1.evaluate(figure=True, text=True)
 
 
 # prepare dataset with bov features
@@ -93,12 +110,12 @@ fids30_data.addFeatures(BOV(50))
 # svc
 exp1 = Experiment(fids30_data,  svm.SVC())
 exp1.train()
-exp1.evaluate()
+exp1.evaluate(figure=True, text=True)
 
 # knn
 exp1 = Experiment(fids30_data, KNeighborsClassifier(n_neighbors=3, weights = 'distance'))
 exp1.train()
-exp1.evaluate()
+exp1.evaluate(figure=True, text=True)
 
 
 

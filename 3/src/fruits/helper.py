@@ -8,12 +8,19 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import seaborn as sn
 #ml
-from sklearn.metrics import confusion_matrix, classification_report, average_precision_score
+from sklearn.metrics import confusion_matrix, classification_report, average_precision_score, precision_score
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
+from sklearn.cluster import MiniBatchKMeans
+
 #data
 import pandas as pd
 import numpy as np
+
+def merge_dols(dol1, dol2):
+    keys = set(dol1).union(dol2)
+    no = []
+    return dict((k, dol1.get(k, no) + dol2.get(k, no)) for k in keys)
 
 
 # class representing experiments.
@@ -44,16 +51,26 @@ class Experiment:
             
 
 
-            #for t in self.x_train:
-            #    for v in t:
+            #for i, t in enumerate(self.x_train):
+            #    for j, v in enumerate(t):
+            #        self.x_train[i][j] = float(self.x_train[i][j])
+            #        if self.x_train[i][j] < 0.01:
+            #            self.x_train[i][j] = float(0.01)
             #        if isinstance(v, str):
             #            print('x is a str!')
-            
+
+            #for i, t in enumerate(self.y_train):
+            #    self.y_train[i] = int(self.y_train[i])
+
+
             #np.savetxt('test_exp2.out', self.x_train, delimiter=',')
             
             self.classifier.fit(self.x_train, self.y_train)
+        def precision(self):
+            predicted = self.classifier.predict(self.x_test)
+            return precision_score(self.y_test, predicted, average='macro')
 
-        def evaluate(self, text=False, figure=False, debug=False):
+        def evaluate(self, text=False, figure=False, precision=False, debug=False):
             predicted = self.classifier.predict(self.x_test)
             confusion = confusion_matrix(self.y_test, predicted)
 
@@ -71,7 +88,9 @@ class Experiment:
             if text:
                 report = classification_report(self.y_test, predicted)
                 print("classifier %s:\n%s\n" % (self.classifier, report))
-                #print("Confusion matrix:\n%s" % confusion)    
+                #print("Confusion matrix:\n%s" % confusion)
+            if precision:
+                print(self.predision())    
 
 class File:
     
@@ -153,6 +172,9 @@ class ImageDataSet:
             """
             self.x_data = []
             self.y_data = []
+        
+        def getData(self, ratio=0.33):
+            return train_test_split(self.x_data, self.y_data, test_size=ratio, random_state=123)
 
 class FIDS30DataSet(ImageDataSet):
         def __init__(self, path=None, limit=None):
@@ -194,7 +216,11 @@ class CarDataSet(ImageDataSet):
             """
             images, labels, count = File().getFiles_CarData(path, clazz, limit)
             # merge read images with existing ones
-            self.images = {**self.images, **images}
+            #for k, v in d.items():
+            #    v = 
+            #self.images = {**self.images, **images}
+            #self.images.update(images)
+            self.images = merge_dols(self.images, images)
             #self.labels = self.labels.union(labels)
             labelslist = list(self.labels)
             labelslist.extend(x for x in labels if x not in labelslist)
@@ -203,6 +229,65 @@ class CarDataSet(ImageDataSet):
             self.count += count
 
 # classes for extracting features from image datasets
+
+class BOV:
+    def __init__(self, no_clusters, orb = False, debug = False):
+        self.no_clusters = no_clusters
+        if orb:
+            self.sift = cv2.ORB_create()
+        else:
+            self.sift = cv2.xfeatures2d.SIFT_create()
+
+    def features(self, images):
+
+        #
+        dico = []
+        labels = []
+        label_count = 0
+        name_dict = {}
+        imcount = 0
+        imglist = []
+        y_data = []
+
+
+        for word, imlist in images.items():
+            labels.append(word)
+            name_dict[str(label_count)] = word
+            for i, img in enumerate(imlist):
+                kp, des = self.sift.detectAndCompute(img, None)
+                if des is None:
+                    print("skipping img size %s" % str(img.shape))
+                    #cv2.imshow("im", img)
+                    #cv2.waitKey(100)
+                else:
+                    for d in des:
+                        dico.append(d)
+                    imcount += 1
+                    imglist.append(img)
+                    y_data.append(label_count)
+            label_count += 1
+
+#k = np.size(species) * 10
+
+        batch_size = imcount * 3
+        kmeans = MiniBatchKMeans(n_clusters=self.no_clusters, batch_size=batch_size, verbose=0).fit(dico)
+        
+        kmeans.verbose = False
+        histo_list = []
+        for img in imglist:
+            kp, des = self.sift.detectAndCompute(img, None)
+
+            histo = np.zeros(self.no_clusters)
+            nkp = np.size(kp)
+
+            for d in des:
+                idx = kmeans.predict([d])
+                histo[idx] += 1/nkp # Because we need normalized histograms, I prefere to add 1/nkp directly
+
+            histo_list.append(histo)
+
+        return (histo_list, y_data)
+
 
 class Histogram:
         """

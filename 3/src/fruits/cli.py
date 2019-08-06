@@ -18,6 +18,7 @@ parser.add_argument('--features-par', nargs="+", help='parameter to pass to feat
 parser.add_argument('--dir', nargs='+', help='dataset root directory')
 parser.add_argument('--pos', nargs='+', help='positive samples data directory')
 parser.add_argument('--neg', nargs='+', help='negative samples data directory')
+parser.add_argument('--output', nargs=1, action='append', help='output: "confusionmatrix", "report", "precision" ')
 
 args = parser.parse_args()
 print (args)
@@ -43,9 +44,9 @@ if args.dataset[0] == "CarData":
         for d in args.pos:
             dataset.loadImages(d, "pos")
 elif args.dataset[0] == "FIDS30":
-    dataset = FIDS30DataSet()
-    for d in args.dir:
-        dataset.loadImages(d)
+    dataset = FIDS30DataSet(args.dir[0])
+    #for d in args.dir:
+    #    dataset.loadImages(d)
 else:
     raise Exception("unknown dataset")
 
@@ -73,12 +74,30 @@ classpar = args.classifier_par[0] if args.classifier_par != None else None
 classifier = args.classifier[0]
 print('training %s with parameter %s' % (classifier, classpar))
 
-models['knn'] = KNeighborsClassifier(n_neighbors=classpar, weights = 'distance')
-models['svm'] = svm.SVC()
+# default to mlp
+exp = Experiment(dataset, MLPClassifier(), "exp")
+# TODO: max_iter or other param
+if classifier == 'svm':
+    exp = Experiment(dataset, svm.SVC(gamma='auto'), "exp")
+if classifier == 'knn':
+    k = classpar if classpar != None else 3
+    exp = Experiment(dataset, KNeighborsClassifier(n_neighbors=k, weights = 'distance'), "exp")
 
-
-exp = Experiment(dataset, models[classifier], "exp")
 exp.train()
-exp.evaluate()
+
+# output
+for o in args.output:
+    o = o[0]
+    if o == 'confusionmatrix':
+        exp.evaluate(figure=True)
+    if o == 'report':
+        exp.evaluate(text=True)
+    if o == 'precision':
+        exp.evaluate(precision=True)
+    
+
+
+
+
 
 
