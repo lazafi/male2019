@@ -174,7 +174,7 @@ class ImageDataSet:
             self.y_data = []
         
         def getData(self, ratio=0.33):
-            return train_test_split(self.x_data, self.y_data, test_size=ratio, random_state=123)
+            return (self.x_data, self.y_data, test_size=ratio, random_state=123)
 
 class FIDS30DataSet(ImageDataSet):
         def __init__(self, path=None, limit=None):
@@ -357,9 +357,10 @@ class Pixel:
         """
         extract pixel data
         """
-        def __init__(self, standartize = True, debug = False):
+        def __init__(self, flatten = False, standartize = False, debug = False):
             self.debug = debug
             self.standartize = standartize
+            self.flatten = flatten
             pass
 
         def features(self, images):
@@ -369,7 +370,9 @@ class Pixel:
             for word, imlist in images.items():
                 labels.append(word)
                 for i, img in enumerate(imlist):
-                    pixels = img.flatten()
+                    pixels = img
+                    if self.flatten:
+                        pixels = img.flatten()
                     #standartize
                     if self.standartize:
                         pixels = [(x - min(pixels)) / (max(pixels) - min(pixels)) for x in pixels]
