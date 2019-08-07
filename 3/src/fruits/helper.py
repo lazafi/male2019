@@ -174,7 +174,7 @@ class ImageDataSet:
             self.y_data = []
         
         def getData(self, ratio=0.33):
-            return (self.x_data, self.y_data, test_size=ratio, random_state=123)
+            return train_test_split(self.x_data, self.y_data, test_size=ratio, random_state=123)
 
 class FIDS30DataSet(ImageDataSet):
         def __init__(self, path=None, limit=None):
