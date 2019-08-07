@@ -182,10 +182,10 @@ class ImageDataSet:
             return train_test_split(self.dataframe, test_size=ratio)
     
 class FIDS30DataSet(ImageDataSet):
-        def __init__(self, read=True, path=None, limit=None):
+        def __init__(self, images=True, path=None, limit=None):
             super(FIDS30DataSet, self).__init__()
             if path != None:
-                if read:
+                if images:
                     self.images, self.labels, self.count = File().getFiles_FIDS30(path, limit)
                 # dataframe
                 data = []
