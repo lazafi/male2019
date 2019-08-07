@@ -21,6 +21,80 @@ from helper import *
 from keras.preprocessing.image import ImageDataGenerator
 
 
+
+
+
+from keras.utils import to_categorical
+from keras.models import Sequential
+from keras.layers import Conv2D
+from keras.layers import MaxPooling2D
+from keras.layers import Dense
+from keras.layers import Flatten
+from keras.optimizers import SGD
+from keras.preprocessing.image import ImageDataGenerator
+import keras
+from keras.models import Sequential
+from keras.layers import Convolution2D, MaxPooling2D, Dense, Dropout, Activation, Flatten
+from keras.layers.normalization import BatchNormalization
+
+def createMyModel():
+    
+    model = Sequential()
+
+    n_filters = 16
+    # this applies n_filters convolution filters of size 5x5 resp. 3x3 each in the 2 layers below
+
+    # Layer 1
+    model.add(Convolution2D(n_filters, 3, 3, border_mode='valid', input_shape=input_shape))
+    # input shape: 100x100 images with 3 channels -> input_shape should be (3, 100, 100) 
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))  # ReLu activation
+    model.add(MaxPooling2D(pool_size=(2, 2))) # reducing image resolution by half
+    model.add(Dropout(0.3))  # random "deletion" of %-portion of units in each batch
+
+    # Layer 2
+    model.add(Convolution2D(n_filters, 3, 3))  # input_shape is only needed in 1st layer
+    #model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    #model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.3))
+
+    model.add(Flatten()) # Note: Keras does automatic shape inference.
+    
+    # Full Layer
+    model.add(Dense(256))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.1))
+
+    model.add(Dense(1,activation='sigmoid'))
+    
+    return model
+
+
+car_data = CarDataSet()
+car_data.loadImages("/home/lazafi/labor/ml-2019/male2019/3/data/CarData/TrainImages")
+car_data.loadImages("/home/lazafi/labor/ml-2019/male2019/3/data/CarData/TestImages", "neg")
+(df_train, df_test) = car_data.getDataFrames()
+
+datagen = ImageDataGenerator(rescale=1.0/255.0, width_shift_range=0.1, height_shift_range=0.1, horizontal_flip=True)
+
+train_it = datagen.flow_from_dataframe(df_train, batch_size=64, target_size=(224, 224))
+test_it = datagen.flow_from_dataframe(df_test, batch_size=64, target_size=(224, 224))
+
+model = createMyModel()
+
+# fit model
+history = model.fit_generator(train_it, steps_per_epoch=len(train_it), validation_data=test_it, validation_steps=len(test_it), epochs=50, verbose=0)
+# evaluate model
+_, acc = model.evaluate_generator(test_it, steps=len(test_it), verbose=0)
+print('> %.3f' % (acc * 100.0))
+
+
+
+
+
+
+
 fids30_data = FIDS30DataSet("/home/lazafi/labor/ml-2019/male2019/3/data/FIDS30", limit=None)
 fids30_data.resetFeatures()
 fids30_data.addFeatures(BOV(10, orb=True, debug=True))
