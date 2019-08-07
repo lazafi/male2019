@@ -118,7 +118,7 @@ class File:
                 for imagefile in glob(path + "/" + word+"/*")[:limit]:
                     #print ("Reading file " + imagefile)
                     im = cv2.imread(imagefile, cv2.COLOR_BGR2RGB)
-                    rgb = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+                    rgb = np.array(cv2.cvtColor(im, cv2.COLOR_BGR2RGB))
                     imlist[word].append(rgb)
                     #plt.imshow(rgb)
                     #plt.show()
@@ -157,6 +157,7 @@ class ImageDataSet:
             self.y_data = []
             self.count = 0
             self.name_dict = {}
+            self.dataframe = None
             pass
         
         def addFeatures(self, featureExtractor):
@@ -175,13 +176,30 @@ class ImageDataSet:
         
         def getData(self, ratio=0.33):
             return train_test_split(self.x_data, self.y_data, test_size=ratio, random_state=123)
-
+        def getDataFrame(self):
+            return self.dataframe
+        def getDataFrames(self, ratio=0.33):
+            return train_test_split(self.dataframe, test_size=ratio)
+    
 class FIDS30DataSet(ImageDataSet):
-        def __init__(self, path=None, limit=None):
+        def __init__(self, read=True, path=None, limit=None):
             super(FIDS30DataSet, self).__init__()
             if path != None:
-                self.images, self.labels, self.count = File().getFiles_FIDS30(path, limit)
+                if read:
+                    self.images, self.labels, self.count = File().getFiles_FIDS30(path, limit)
+                # dataframe
+                data = []
+                for each in glob(path + "/*")[:limit]:
+                    if isdir(each):
+                        word = each.split("/")[-1]
+                        for imagefile in glob(path + "/" + word+"/*")[:limit]:
+                            #print(imagefile)
+                            #print(word)
+                            line = list([imagefile, word])
+                            data.append(line)
+                self.dataframe = pd.DataFrame(data, columns = ['filename', 'class']) 
             #self.labels
+            
             pass
 
         def loadImages(self, path, clazz=None, limit=None):
@@ -364,7 +382,10 @@ class Pixel:
             pass
 
         def features(self, images):
-            x_data = []
+            imcount = 0
+            for word, imlist in images.items():
+                imcount += 1
+            x_data = np.empty((imcount))
             y_data = []
             labels = []
             for word, imlist in images.items():
@@ -376,7 +397,7 @@ class Pixel:
                     #standartize
                     if self.standartize:
                         pixels = [(x - min(pixels)) / (max(pixels) - min(pixels)) for x in pixels]
-                    x_data.append(pixels)
+                    x_data = np.append(x_data, pixels, axis = 0)
                     y_data.append(labels.index(word))
                     if self.debug:
                         print(word)
