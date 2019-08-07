@@ -157,7 +157,7 @@ class ImageDataSet:
             self.y_data = []
             self.count = 0
             self.name_dict = {}
-            self.dataframe = None
+            self.dataframe = pd.DataFrame([], columns = ['filename', 'class'])
             pass
         
         def addFeatures(self, featureExtractor):
@@ -182,7 +182,7 @@ class ImageDataSet:
             return train_test_split(self.dataframe, test_size=ratio)
     
 class FIDS30DataSet(ImageDataSet):
-        def __init__(self, images=True, path=None, limit=None):
+        def __init__(self, path=None, images=True, limit=None):
             super(FIDS30DataSet, self).__init__()
             if path != None:
                 if images:
@@ -207,6 +207,7 @@ class FIDS30DataSet(ImageDataSet):
             load images from directory
             all images in clazz if specified
             if no clazz, the image class is guessed from name (neg* or pos*)
+            NOTE: DO NOT USE
             """
             images, labels, count = File().getFiles_FIDS30(path, limit)
             # merge read images with existing ones
@@ -226,25 +227,41 @@ class CarDataSet(ImageDataSet):
             #self.labels
             pass
 
-        def loadImages(self, path, clazz=None, limit=None):
+        def loadImages(self, path, clazz=None, images=True, limit=None):
             """
             load images from directory
             all images in clazz if specified
             if no clazz, the image class is guessed from name (neg* or pos*)
             """
-            images, labels, count = File().getFiles_CarData(path, clazz, limit)
-            # merge read images with existing ones
-            #for k, v in d.items():
-            #    v = 
-            #self.images = {**self.images, **images}
-            #self.images.update(images)
-            self.images = merge_dols(self.images, images)
-            #self.labels = self.labels.union(labels)
-            labelslist = list(self.labels)
-            labelslist.extend(x for x in labels if x not in labelslist)
-            self.labels = labelslist
-            #self.labels = set(self.labels)
-            self.count += count
+            if images:
+                images, labels, count = File().getFiles_CarData(path, clazz, limit)
+                # merge read images with existing ones
+                #for k, v in d.items():
+                #    v = 
+                #self.images = {**self.images, **images}
+                #self.images.update(images)
+                self.images = merge_dols(self.images, images)
+                #self.labels = self.labels.union(labels)
+                labelslist = list(self.labels)
+                labelslist.extend(x for x in labels if x not in labelslist)
+                self.labels = labelslist
+                #self.labels = set(self.labels)
+                self.count += count
+            # dataframe
+            data = []
+            for each in glob(path + "/*"):
+                print(each)
+                count +=1 
+                if clazz == None:
+                    filename = each.split("/")[-1]
+                    word = filename.split("-")[0]
+                else:
+                    word = clazz
+                print (word)
+                line = list([each, word])
+                data.append(line)
+            df = pd.DataFrame(data, columns = ['filename', 'class']) 
+            self.dataframe = self.dataframe.append(df) 
 
 # classes for extracting features from image datasets
 
