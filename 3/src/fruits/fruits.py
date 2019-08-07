@@ -18,6 +18,74 @@ from sklearn.neural_network import MLPClassifier
 
 from helper import *
 
+from keras.preprocessing.image import ImageDataGenerator
+
+
+fids30_data = FIDS30DataSet("/home/lazafi/labor/ml-2019/male2019/3/data/FIDS30", limit=None)
+fids30_data.resetFeatures()
+fids30_data.addFeatures(BOV(10, orb=True, debug=True))
+
+exp1 = Experiment(fids30_data,  MLPClassifier())
+exp1.train()
+exp1.evaluate(figure=True)
+
+
+
+car_data = CarDataSet()
+car_data.loadImages("/home/lazafi/labor/ml-2019/male2019/3/data/CarData/TrainImages")
+car_data.loadImages("/home/lazafi/labor/ml-2019/male2019/3/data/CarData/TestImages", "neg")
+(df_train, df_test) = car_data.getDataFrames()
+
+
+fruit_data = FIDS30DataSet("/home/lazafi/labor/ml-2019/male2019/3/data/FIDS30", 5)
+print(fruit_data.count)
+# TODO: standartize=True is very slow!
+#fruit_data.addFeatures(Pixel(standartize = False, debug=False))
+(df, dfs) = fruit_data.getDataFrames()
+
+datagen = ImageDataGenerator(rescale=1.0/255.0)
+
+train_it = datagen.flow_from_dataframe(df, batch_size=64)
+
+
+
+from keras.datasets import cifar10
+from keras.datasets import fashion_mnist
+
+## keras test
+(x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
+y_train = np_utils.to_categorical(y_train, num_classes)
+y_test = np_utils.to_categorical(y_test, num_classes)
+
+datagen = ImageDataGenerator(
+    featurewise_center=True,
+    featurewise_std_normalization=True,
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    horizontal_flip=True)
+
+# compute quantities required for featurewise normalization
+# (std, mean, and principal components if ZCA whitening is applied)
+datagen.fit(x_train)
+
+# fits the model on batches with real-time data augmentation:
+model.fit_generator(datagen.flow(x_train, y_train, batch_size=32),
+                    steps_per_epoch=len(x_train) / 32, epochs=epochs)
+
+# here's a more "manual" example
+for e in range(epochs):
+    print('Epoch', e)
+    batches = 0
+    for x_batch, y_batch in datagen.flow(x_train, y_train, batch_size=32):
+        model.fit(x_batch, y_batch)
+        batches += 1
+        if batches >= len(x_train) / 32:
+            # we need to break the loop by hand because
+            # the generator loops indefinitely
+            break
+
+
 
 # prepare the car dataset with histogram features
 #datapath = "/home/lazafi/labor/ml-2019/male2019/3/data/CarData"

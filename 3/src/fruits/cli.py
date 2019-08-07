@@ -1,6 +1,5 @@
 import argparse
 from helper import *
-from bov.Bag import BOV
 
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -14,11 +13,13 @@ parser.add_argument('--classifier', nargs=1, help='"svm", "knn", "mlp"')
 parser.add_argument('--classifier-par', nargs="+", help='parameter to pass to classifier')
 parser.add_argument('--features', nargs="+", help='"histogram", "bov", "pixel"')
 parser.add_argument('--histogram-bins', nargs="+", help='bins per chanel for histogram features (default 10)')
+parser.add_argument('--bov-descriptors', nargs="+", help='amount of descriptors for BOV (default 20)')
 parser.add_argument('--features-par', nargs="+", help='parameter to pass to feature extractor')
 parser.add_argument('--dir', nargs='+', help='dataset root directory')
 parser.add_argument('--pos', nargs='+', help='positive samples data directory')
 parser.add_argument('--neg', nargs='+', help='negative samples data directory')
 parser.add_argument('--output', nargs=1, action='append', help='output: "confusionmatrix", "report", "precision" ')
+parser.add_argument('--verbose',  help='verbose output')
 
 args = parser.parse_args()
 print (args)
@@ -62,7 +63,7 @@ for f in args.features:
         extractor = Histogram(k)
 #    , "bov", "pixel"
     if f == "bov":
-        p = 50
+        p = int(args.bov_descriptors[0]) if args.bov_descriptors != None else 20
         extractor = BOV(p)
     if f == "pixel":
         extractor = Pixel()
@@ -75,7 +76,8 @@ classifier = args.classifier[0]
 print('training %s with parameter %s' % (classifier, classpar))
 
 # default to mlp
-exp = Experiment(dataset, MLPClassifier(), "exp")
+m = classpar if classpar != None else 3200
+exp = Experiment(dataset, MLPClassifier(max_iter=m, verbose=False), "exp")
 # TODO: max_iter or other param
 if classifier == 'svm':
     exp = Experiment(dataset, svm.SVC(gamma='auto'), "exp")

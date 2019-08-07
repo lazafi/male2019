@@ -140,7 +140,7 @@ class File:
                 word = filename.split("-")[0]
             else:
                 word = clazz
-            print (word + ": " + each + " " + str(im.shape))
+            #print (word + ": " + each + " " + str(im.shape))
             #cv2.imshow("im", im)
             #cv2.waitKey(10)
                 
@@ -250,24 +250,25 @@ class CarDataSet(ImageDataSet):
             # dataframe
             data = []
             for each in glob(path + "/*"):
-                print(each)
+                #print(each)
                 count +=1 
                 if clazz == None:
                     filename = each.split("/")[-1]
                     word = filename.split("-")[0]
                 else:
                     word = clazz
-                print (word)
+                #print (word)
                 line = list([each, word])
                 data.append(line)
             df = pd.DataFrame(data, columns = ['filename', 'class']) 
             self.dataframe = self.dataframe.append(df) 
-
+            print ("loaded neg:%d pos:%d" % (len(self.images['neg']), len(self.images['pos'])))
 # classes for extracting features from image datasets
 
 class BOV:
     def __init__(self, no_clusters, orb = False, debug = False):
         self.no_clusters = no_clusters
+        self.debug = debug
         if orb:
             self.sift = cv2.ORB_create()
         else:
@@ -291,12 +292,16 @@ class BOV:
             for i, img in enumerate(imlist):
                 kp, des = self.sift.detectAndCompute(img, None)
                 if des is None:
-                    print("skipping img size %s" % str(img.shape))
+                    print("skipping img %d size %s" % (imcount, str(img.shape)))
                     #cv2.imshow("im", img)
                     #cv2.waitKey(100)
                 else:
+                    if self.debug:
+                        print("image %d keypoints %d, descriptors %d" % (imcount, len(kp), len(des)))
                     for d in des:
                         dico.append(d)
+                    if self.debug:
+                        print(len(dico))
                     imcount += 1
                     imglist.append(img)
                     y_data.append(label_count)
@@ -305,9 +310,9 @@ class BOV:
 #k = np.size(species) * 10
 
         batch_size = imcount * 3
-        kmeans = MiniBatchKMeans(n_clusters=self.no_clusters, batch_size=batch_size, verbose=0).fit(dico)
+        kmeans = MiniBatchKMeans(n_clusters=self.no_clusters, batch_size=batch_size, verbose=self.debug).fit(dico)
         
-        kmeans.verbose = False
+        kmeans.verbose = self.debug
         histo_list = []
         for img in imglist:
             kp, des = self.sift.detectAndCompute(img, None)
